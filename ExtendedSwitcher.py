@@ -20,14 +20,22 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 		active_view_id = self.active_view.id()
 
 		for view in self.getViews(list_mode):
+			is_current_view = view.id() == active_view_id
+
 			# if skip the current active is enabled do not add the current file it for selection
 			if self.settings.get('skip_current_file') == True:
-				if view.id() == active_view_id:
+				if is_current_view:
 					continue
 
 			self.open_views.append(view) # add the view object
 			file_name = view.file_name() # get the full path
 			file_path = ''
+
+			if is_current_view:
+				current_view_prefix = " (Current View)"
+
+			else:
+				current_view_prefix = ""
 
 			if file_name:
 				for folder in folders:
@@ -38,19 +46,19 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 					file_name += self.settings.get('mark_dirty_file_char') # if there are any unsaved changes to the file
 
 				if self.settings.get('show_full_file_path') == True:
-					self.open_files.append([os.path.basename(file_name), file_path])
+					self.open_files.append([os.path.basename(file_name) + current_view_prefix, file_path])
 				else:
-					self.open_files.append([os.path.basename(file_name), ''])
+					self.open_files.append([os.path.basename(file_name) + current_view_prefix, ''])
 			elif view.name():
 				if view.is_dirty():
-					self.open_files.append([view.name() + self.settings.get('mark_dirty_file_char'), ''])
+					self.open_files.append([view.name() + self.settings.get('mark_dirty_file_char') + current_view_prefix, ''])
 				else:
-					self.open_files.append([view.name(), ''])
+					self.open_files.append([view.name() + current_view_prefix, ''])
 			else:
 				if view.is_dirty():
-					self.open_files.append(["Untitled"+self.settings.get('mark_dirty_file_char'), ''])
+					self.open_files.append(["Untitled"+self.settings.get('mark_dirty_file_char') + current_view_prefix, ''])
 				else:
-					self.open_files.append(["Untitled", ''])
+					self.open_files.append(["Untitled" + current_view_prefix, ''])
 
 		if self.check_for_sorting() == True:
 			self.sort_files()
