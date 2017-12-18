@@ -19,7 +19,11 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 		folders = self.window.folders()
 		active_view_id = self.active_view.id()
 
+		current_index = 0
+		current_tab_index = 0
+
 		for view in self.getViews(list_mode):
+			current_index += 1
 			is_current_view = view.id() == active_view_id
 
 			# if skip the current active is enabled do not add the current file it for selection
@@ -32,6 +36,7 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 			file_path = ''
 
 			if is_current_view:
+				current_tab_index = current_index
 				current_view_prefix = " (Current View)"
 
 			else:
@@ -60,6 +65,9 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 				else:
 					self.open_files.append(["Untitled" + current_view_prefix, ''])
 
+		if current_tab_index == current_index:
+			current_tab_index -= 2
+
 		if self.check_for_sorting() == True:
 			self.sort_files()
 
@@ -68,7 +76,7 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 			if selected > -1:
 				self.window.focus_view(self.open_views[selected])
 
-		self.window.show_quick_panel(self.open_files, self.tab_selected, 0, -1, on_selection) # show the file list
+		self.window.show_quick_panel(self.open_files, self.tab_selected, 0, current_tab_index, on_selection) # show the file list
 
 	# display the selected open file
 	def tab_selected(self, selected):
