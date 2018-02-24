@@ -65,7 +65,14 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 				else:
 					self.open_files.append(["Untitled" + current_view_prefix, ''])
 
-		if current_tab_index == current_index:
+		# Make the last item jump back
+		# print( "current_index:", current_index )
+		# print( "current_tab_index:", current_tab_index )
+
+		if current_tab_index == 1:
+			current_tab_index += 0
+
+		else:
 			current_tab_index -= 2
 
 		if self.check_for_sorting() == True:
@@ -76,7 +83,8 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 			if selected > -1:
 				self.window.focus_view(self.open_views[selected])
 
-		self.window.show_quick_panel(self.open_files, self.tab_selected, 0, current_tab_index, on_selection) # show the file list
+		# show the file list
+		self.window.show_quick_panel(self.open_files, self.tab_selected, 0, current_tab_index, on_selection)
 
 	# display the selected open file
 	def tab_selected(self, selected):
@@ -126,6 +134,6 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 		if (list_mode == "window") or (len(views) < 1):
 			views = self.window.views()
 
-		return views
-
+		# Reverse the sorting order to make the up arrow to move right and down arrow to move left
+		return list( reversed( views ) )
 
