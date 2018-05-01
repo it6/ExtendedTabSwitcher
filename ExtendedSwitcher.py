@@ -84,7 +84,8 @@ class ExtendedSwitcherCommand(sublime_plugin.WindowCommand):
 				self.window.focus_view(self.open_views[selected])
 
 		# show the file list
-		self.window.show_quick_panel(self.open_files, self.tab_selected, 0, current_tab_index, on_selection)
+		# self.window.show_quick_panel(self.open_files, self.tab_selected, 0, current_tab_index, on_selection)
+		self.window.show_quick_panel(self.open_files, self.tab_selected, False, -1)
 
 	# display the selected open file
 	def tab_selected(self, selected):
